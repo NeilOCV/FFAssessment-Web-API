@@ -1,0 +1,10 @@
+C:\Source\GitHub\FiveFriday\FFAssessment-Web-API\DL\bin\Debug\DL.dll.config
+C:\Source\GitHub\FiveFriday\FFAssessment-Web-API\DL\bin\Debug\DL.dll
+C:\Source\GitHub\FiveFriday\FFAssessment-Web-API\DL\bin\Debug\DL.pdb
+C:\Source\GitHub\FiveFriday\FFAssessment-Web-API\DL\bin\Debug\EntityFramework.dll
+C:\Source\GitHub\FiveFriday\FFAssessment-Web-API\DL\bin\Debug\EntityFramework.SqlServer.dll
+C:\Source\GitHub\FiveFriday\FFAssessment-Web-API\DL\bin\Debug\EntityFramework.xml
+C:\Source\GitHub\FiveFriday\FFAssessment-Web-API\DL\bin\Debug\EntityFramework.SqlServer.xml
+C:\Source\GitHub\FiveFriday\FFAssessment-Web-API\DL\obj\Debug\DL.csprojResolveAssemblyReference.cache
+C:\Source\GitHub\FiveFriday\FFAssessment-Web-API\DL\obj\Debug\DL.dll
+C:\Source\GitHub\FiveFriday\FFAssessment-Web-API\DL\obj\Debug\DL.pdb
