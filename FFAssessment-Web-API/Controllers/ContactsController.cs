@@ -11,33 +11,99 @@ namespace FFAssessment_Web_API.Controllers
     //[Authorize]
     public class ContactsController : ApiController
     {
-        // GET api/Contacts
-        public IEnumerable<string> Get()
+        // GET /api/Contacts
+        public IEnumerable<Contact> Get()
         {
-            return new string[] { "value1", "value2" };
+            using (DBContext context = new DBContext())
+            {
+                return context.Contacts.ToList();
+            }
         }
 
-        // GET api/Contacts/5
-        public string Get(int id)
+        // GET /api/Contacts/5
+        public Contact Get(int id)
         {
-            return "Contacts";
+            using (DBContext context = new DBContext())
+            {
+                return context.Contacts.FirstOrDefault(c => c.id == id);
+            }
         }
 
-        // POST api/Contacts
-        public void Post([FromBody]string value)
+        // POST /api/Contacts
+        public HttpResponseMessage Post([FromBody]Contact contact)
         {
+            try
+            {
+                using (DBContext context = new DBContext())
+                {
+                    context.Contacts.Add(contact);
+                    context.SaveChanges();
+
+                    var message = Request.CreateResponse(HttpStatusCode.Created, contact);
+                    message.Headers.Location = new Uri(Request.RequestUri + "/" + contact.id.ToString());
+                    return message;
+                }
+            }
+            catch (Exception ex)
+            {
+                return Request.CreateErrorResponse(HttpStatusCode.BadRequest, ex);
+            }
+        }
+
+        // PUT /api/Contacts/5
+        public HttpResponseMessage Put(int id, [FromBody]Contact contact)
+        {
+            try
+            {
+                using (DBContext context = new DBContext())
+                {
+                    var entity = context.Contacts.FirstOrDefault(c => c.id == id);
+                    if (entity == null) //Tried to get something that does not exist.
+                    {
+                        return Request.CreateErrorResponse(HttpStatusCode.NotFound, "Contact with id " + id.ToString() + " not found.  Nothing to update!");
+                    }
+                    else
+                    {
+                        entity.name = contact.name;
+                        entity.number = contact.number;
+                        entity.email = contact.email;
+                        entity.customer_id = contact.customer_id;
+
+                        context.SaveChanges();
+                        return Request.CreateResponse(HttpStatusCode.OK, entity);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                return Request.CreateErrorResponse(HttpStatusCode.BadRequest, ex);
+            }
 
         }
 
-        // PUT api/Contacts/5
-        public void Put(int id, [FromBody]string value)
+        // DELETE /api/Contacts/5
+        public HttpResponseMessage Delete(int id)
         {
-        }
+            try
+            {
+                using (DBContext context = new DBContext())
+                {
+                    var entity = context.Contacts.FirstOrDefault(c => c.id == id);
+                    if (entity == null)//Nothig found to delete
+                        return Request.CreateErrorResponse(HttpStatusCode.NotFound, "Contact with id " + id.ToString() + " not found.  Nothing deleted.");
+                    else
+                    {
+                        context.Contacts.Remove(entity);
+                        context.SaveChanges();
 
-        // DELETE api/Contacts/5
-        public void Delete(int id)
-        {
-
+                        return Request.CreateResponse(HttpStatusCode.OK, "Entity with id " + id.ToString() + " deleted.");
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                return Request.CreateErrorResponse(HttpStatusCode.BadRequest,ex);
+            }
         }
     }
 }
