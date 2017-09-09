@@ -96,7 +96,7 @@ namespace FFAssessment_Web_API.Controllers
                         context.Contacts.Remove(entity);
                         context.SaveChanges();
 
-                        return Request.CreateResponse(HttpStatusCode.OK, "Entity with id " + id.ToString() + " deleted.");
+                        return Request.CreateResponse(HttpStatusCode.OK, "Contact with id " + id.ToString() + " deleted.");
                     }
                 }
             }

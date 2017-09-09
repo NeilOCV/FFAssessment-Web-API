@@ -12,36 +12,97 @@ namespace FFAssessment_Web_API.Controllers
     public class CustomersController : ApiController
     {
         // GET api/Customers
-        public IEnumerable<string> Get()
+        public IEnumerable<Customer> Get()
         {
-            return new string[] { "value1", "value2" };
-        }
-
-        // GET api/Customers/5
-        public string Get(int id)
-        {
-            return "Customers";
-        }
-
-        // POST api/Customers
-        public void Post([FromBody]Customer customer)
-        {
-            using(DBContext context=new DBContext())
+            using (DBContext context = new DBContext())
             {
-                context.Customers.Add(customer);
-                context.SaveChanges();
+                return context.Customers.ToList();
             }
         }
 
-        // PUT api/Customers/5
-        public void Put(Customer customer)
+        // GET api/Customers/5
+        public Customer Get(int id)
         {
-            
+            using (DBContext context = new DBContext())
+            {
+                return context.Customers.FirstOrDefault(c => c.id == id);
+            }
         }
 
-        // DELETE api/Customers/5
-        public void Delete(int id)
+        // POST /api/Customers
+        public HttpResponseMessage Post([FromBody]Customer customer)
         {
+            try
+            {
+                using (DBContext context = new DBContext())
+                {
+                    context.Customers.Add(customer);
+                    context.SaveChanges();
+
+                    var message = Request.CreateResponse(HttpStatusCode.Created, customer);
+                    message.Headers.Location = new Uri(Request.RequestUri + "/" + customer.id.ToString());
+                    return message;
+                }
+            }
+            catch (Exception ex)
+            {
+                return Request.CreateErrorResponse(HttpStatusCode.BadRequest, ex);
+            }
+        }
+
+        // PUT /api/Customers/5
+        public HttpResponseMessage Put(int id, [FromBody]Customer customer)
+        {
+            try
+            {
+                using (DBContext context = new DBContext())
+                {
+                    var entity = context.Customers.FirstOrDefault(c => c.id == id);
+                    if (entity == null) //Tried to get something that does not exist.
+                    {
+                        return Request.CreateErrorResponse(HttpStatusCode.NotFound, "Customer with id " + id.ToString() + " not found.  Nothing to update!");
+                    }
+                    else
+                    {
+                        entity.name = customer.name;
+                        entity.latitude = customer.latitude;
+                        entity.longetude = customer.longetude;
+                        
+                        context.SaveChanges();
+                        return Request.CreateResponse(HttpStatusCode.OK, entity);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                return Request.CreateErrorResponse(HttpStatusCode.BadRequest, ex);
+            }
+
+        }
+
+        // DELETE /api/Customers/5
+        public HttpResponseMessage Delete(int id)
+        {
+            try
+            {
+                using (DBContext context = new DBContext())
+                {
+                    var entity = context.Customers.FirstOrDefault(c => c.id == id);
+                    if (entity == null)//Nothig found to delete
+                        return Request.CreateErrorResponse(HttpStatusCode.NotFound, "Customer with id " + id.ToString() + " not found.  Nothing deleted.");
+                    else
+                    {
+                        context.Customers.Remove(entity);
+                        context.SaveChanges();
+
+                        return Request.CreateResponse(HttpStatusCode.OK, "Customer with id " + id.ToString() + " deleted.");
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                return Request.CreateErrorResponse(HttpStatusCode.BadRequest, ex);
+            }
         }
     }
 }

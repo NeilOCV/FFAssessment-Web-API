@@ -25,6 +25,12 @@ namespace FFAssessment_Web_API
                 routeTemplate: "api/{controller}/{id}",
                 defaults: new { id = RouteParameter.Optional }
             );
+            //Spec asks explicitly for JSON.
+            config.Formatters.Remove(config.Formatters.XmlFormatter);
+
+            //Make the JSON look nice and usable
+            config.Formatters.JsonFormatter.SerializerSettings.Formatting = Newtonsoft.Json.Formatting.Indented;
+            config.Formatters.JsonFormatter.SerializerSettings.ContractResolver = new CamelCasePropertyNamesContractResolver();
         }
     }
 }
