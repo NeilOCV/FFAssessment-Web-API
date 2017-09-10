@@ -12,11 +12,22 @@ namespace FFAssessment_Web_API.Controllers
     public class ContactsController : ApiController
     {
         // GET /api/Contacts
-        public IEnumerable<Contact> Get()
+        public HttpResponseMessage Get(string cust_id = "0")
         {
             using (DBContext context = new DBContext())
             {
-                return context.Contacts.ToList();
+                try
+                {
+                    int customer_id = Convert.ToInt32(cust_id);
+                    if (customer_id == 0)//Show everything
+                        return Request.CreateResponse(HttpStatusCode.OK, context.Contacts.ToList());
+                    else
+                        return Request.CreateResponse(HttpStatusCode.OK, context.Contacts.Where(c => c.customer_id == customer_id).ToList());
+                }
+                catch (Exception ex)
+                {
+                    return Request.CreateErrorResponse(HttpStatusCode.BadRequest, ex);
+                }
             }
         }
 
@@ -67,7 +78,7 @@ namespace FFAssessment_Web_API.Controllers
 
                     var parent = context.Customers.FirstOrDefault(p => p.id == contact.customer_id);
                     if (parent == null)//Uh oh!
-                        return Request.CreateErrorResponse(HttpStatusCode.Forbidden, "The edited values requests for this entity to be relational to a parent with id "+contact.customer_id.ToString()+".  However.  This parent does not exist.  This can not be allowed.  Please correct and resubmit.");
+                        return Request.CreateErrorResponse(HttpStatusCode.Forbidden, "The edited values requests for this entity to be relational to a parent with id " + contact.customer_id.ToString() + ".  However.  This parent does not exist.  This can not be allowed.  Please correct and resubmit.");
                     #endregion
 
                     var entity = context.Contacts.FirstOrDefault(c => c.id == id);
@@ -115,7 +126,7 @@ namespace FFAssessment_Web_API.Controllers
             }
             catch (Exception ex)
             {
-                return Request.CreateErrorResponse(HttpStatusCode.BadRequest,ex);
+                return Request.CreateErrorResponse(HttpStatusCode.BadRequest, ex);
             }
         }
     }
