@@ -57,6 +57,8 @@ namespace FFAssessment_Web_API.Controllers
             {
                 using (DBContext context = new DBContext())
                 {
+                    
+
                     var entity = context.Customers.FirstOrDefault(c => c.id == id);
                     if (entity == null) //Tried to get something that does not exist.
                     {
@@ -81,12 +83,19 @@ namespace FFAssessment_Web_API.Controllers
         }
 
         // DELETE /api/Customers/5
+
         public HttpResponseMessage Delete(int id)
         {
             try
             {
                 using (DBContext context = new DBContext())
                 {
+                    #region Check to see if the customer has children before deleting
+                    var children = context.Contacts.FirstOrDefault(o => o.customer_id == id);
+                    if (children != null)
+                        return Request.CreateErrorResponse(HttpStatusCode.Forbidden, "Customer with id " + id.ToString() + " still has contacts.  Please delete them first.");
+                    #endregion
+
                     var entity = context.Customers.FirstOrDefault(c => c.id == id);
                     if (entity == null)//Nothig found to delete
                         return Request.CreateErrorResponse(HttpStatusCode.NotFound, "Customer with id " + id.ToString() + " not found.  Nothing deleted.");

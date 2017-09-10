@@ -36,6 +36,12 @@ namespace FFAssessment_Web_API.Controllers
             {
                 using (DBContext context = new DBContext())
                 {
+                    #region Check to see if the customer exists before allowing the addition of contacts
+                    var parent = context.Customers.FirstOrDefault(c => c.id == contact.customer_id);
+                    if (parent == null)
+                        return Request.CreateErrorResponse(HttpStatusCode.Forbidden, "No parent with id " + contact.customer_id.ToString() + " exists.  This can not be allowed.  Please correct and resubmit.");
+                    #endregion
+
                     context.Contacts.Add(contact);
                     context.SaveChanges();
 
@@ -57,6 +63,13 @@ namespace FFAssessment_Web_API.Controllers
             {
                 using (DBContext context = new DBContext())
                 {
+                    #region Check to see if the editted value still contains a valid parent
+
+                    var parent = context.Customers.FirstOrDefault(p => p.id == contact.customer_id);
+                    if (parent == null)//Uh oh!
+                        return Request.CreateErrorResponse(HttpStatusCode.Forbidden, "The edited values requests for this entity to be relational to a parent with id "+contact.customer_id.ToString()+".  However.  This parent does not exist.  This can not be allowed.  Please correct and resubmit.");
+                    #endregion
+
                     var entity = context.Contacts.FirstOrDefault(c => c.id == id);
                     if (entity == null) //Tried to get something that does not exist.
                     {
