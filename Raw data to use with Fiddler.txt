@@ -1,0 +1,8 @@
+Customer
+{"name":"Microsoft", "latitude":-26.043663,"longetude":28.0162543}
+{"name":"Apple", "latitude":37.3320003,"longetude":-122.0329699}
+{"name":"Some really large company", "latitude":0.0123,"longetude":-123.123456789}
+
+Contact
+{"name":"Bill Gates","email":"Bill.Gates@microsoft.com","number":"(206) 709-3140","customer_id":1}
+{"name":"Tim Cook","email":"TCook@apple.com","number":"1-408-996-1010","customer_id":2}
